@@ -1,0 +1,21 @@
+{
+  "name": "advent-of-code-2024",
+  "version": "1.0.0",
+  "description": "new project",
+  "main": "main.ts",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.tsx",
+    "build": "tsx --emit src/main.tsx",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec 'ts-node' ./src/main.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.2",
+    "typescript": "^4.9.5"
+  }
+}
