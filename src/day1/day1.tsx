@@ -4,6 +4,11 @@ const list1: number[] = [];
 const list2: number[] = [];
 
 function constructInput() {
+
+    //reset the lists
+    list1.length = 0;
+    list2.length = 0;
+
     const inputList1 = fs.readFileSync('./src/day1/input1.txt','utf-8');
 
     const locationLists = inputList1.split('\n');
@@ -38,4 +43,28 @@ export function getTotalDistanceSum() : number {
 
 
     return totalDistance;
+}
+
+export function getSimilarityScore() : number {
+    let totalSimilarityScore = 0;
+
+    constructInput();
+
+    let occurenceMapinList = new Map<number,number>();
+
+    for(let i = 0; i < list2.length; i++) {
+        
+        let currentOccurence = occurenceMapinList.get(list2[i]) ?? 0;
+            occurenceMapinList.set(list2[i], currentOccurence + 1);
+    }
+
+    for(let i = 0; i < list1.length; i++) {
+        
+        let similarityScore = list1[i] * (occurenceMapinList.get(list1[i]) ?? 0);
+
+        totalSimilarityScore += similarityScore;
+        
+    }
+
+    return totalSimilarityScore;
 }
