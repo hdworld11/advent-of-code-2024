@@ -1,6 +1,24 @@
 import { getLines } from '../utils.tsx'
 
-export function getSafeReports(): number {
+export function getProcessedReports(): number {
+
+    let listResults = getLines('./src/day2/input.txt');
+
+    let numSafeReports = 0;
+
+    for(let i = 0; i < listResults.length; i++){
+
+        let report = listResults[i].split(' ');
+
+        if(isReportSafe(report.map(Number))){
+            numSafeReports++;
+        }
+    }
+
+    return numSafeReports;
+}
+
+export function getProcessedReports_withDampener(): number {
 
     let numSafeReports = 0;
 
@@ -8,48 +26,69 @@ export function getSafeReports(): number {
 
     for(let i = 0; i < listResults.length; i++){
 
-        let report = listResults[i].split(' ');
+        let report = listResults[i].split(' ').map(Number);
 
-        //going to hold the occurence of increasing and decreasing
-        let differenceMap = new Map<number, number>();
-
-        for(let i = 0; i < report.length; i++){
-
-            if (i == 0)
-                continue;
-
-            let prevLevel = Number(report[i-1]);
-            let currLevel = Number(report[i]);
-
-            let levelDifference = currLevel - prevLevel;
-
-            if(Math.abs(levelDifference) < 1 || Math.abs(levelDifference) > 3){
-                // too much difference, break out
-                break;
-            }
-
-            if(levelDifference < 0){
-                if(differenceMap.get(1) !== undefined)
-                    // report is not safe, break out of loop
-                    break;
-
-                differenceMap.set(-1, (differenceMap.get(-1) ?? 0) + 1);
-            } else if (levelDifference > 0){
-                if(differenceMap.get(-1) !== undefined)
-                    //report is not safe, break out of loop
-                    break;
-                differenceMap.set(1, (differenceMap.get(1) ?? 0) + 1)
-            }
-            else{
-                // difference is 0, unsafe, break
-                break;
-            }
-        }
-
-        if(differenceMap.get(1) == report.length-1 || differenceMap.get(-1) == report.length-1){
+        if(isReportSafe(report)){
             numSafeReports++;
+            continue;
+        }
+        else{
+            let tempList = Array.from(report);
+            for(let k = 0; k < report.length; k++){
+                //remove item at index
+                tempList.splice(k,1);
+
+                if(isReportSafe(tempList)){
+                    numSafeReports++;
+                    break;
+                } else {
+                    tempList = Array.from(report);
+                }
+            }
         }
     }
 
     return numSafeReports;
+}
+
+function isReportSafe(levels: number[]): boolean {
+
+    let numIncreasing = 0;
+    let numDecreasing = 0;
+
+    for(let i = 0; i < levels.length; i++){
+
+        if(i == 0){
+            continue;
+        }
+
+        let levelDifference = levels[i] - levels[i-1];
+
+        if(Math.abs(levelDifference) < 1 || Math.abs(levelDifference) > 3){
+            return false;
+        }
+
+        if(levelDifference < 0){
+            if(numIncreasing != 0){
+                return false;
+            }
+
+            numDecreasing++;
+            continue;
+        } else if(levelDifference > 0){
+            if(numDecreasing != 0){
+                return false;
+            }
+
+            numIncreasing++;
+            continue;
+        }
+    }
+
+
+    if(numDecreasing == levels.length-1 || numIncreasing == levels.length-1){
+        return true;
+    }
+
+    return false;
 }
